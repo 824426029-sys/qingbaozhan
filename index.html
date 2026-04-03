@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>国内内容情报站</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:    #08080f;
+      --bg2:   #0f0f1a;
+      --card:  rgba(168,85,247,0.05);
+      --cbord: rgba(168,85,247,0.16);
+      --chov:  rgba(168,85,247,0.10);
+      --p:     #a855f7;
+      --pk:    #ec4899;
+      --t:     #e8e8f0;
+      --m:     #6b6b8a;
+      --dim:   #1e1e2e;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--t);
+      font-family: 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', sans-serif;
+      min-height: 100vh;
+      line-height: 1;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -300px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 700px;
+      background: radial-gradient(ellipse, rgba(168,85,247,0.10) 0%, transparent 65%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .wrap {
+      position: relative; z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ── Banner ── */
+    .banner {
+      display: flex; justify-content: center;
+      padding-top: 40px;
+    }
+    .banner-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(168,85,247,0.07);
+      border: 1px solid rgba(168,85,247,0.22);
+      border-radius: 999px; padding: 6px 20px;
+      font-size: 12px; color: var(--m); letter-spacing: 0.5px;
+    }
+    .banner-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--p); display: inline-block;
+      box-shadow: 0 0 8px rgba(168,85,247,0.6);
+    }
+
+    /* ── Hero ── */
+    .hero { text-align: center; padding: 40px 0 0; }
+    .hero h1 {
+      font-size: clamp(52px, 9vw, 96px);
+      font-weight: 900; line-height: 1.05; letter-spacing: -1px;
+    }
+    .hero h1 .g {
+      background: linear-gradient(135deg, var(--p) 0%, var(--pk) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub {
+      margin: 20px auto 0;
+      font-size: clamp(12px, 1.6vw, 14px);
+      color: var(--m); line-height: 1.9; max-width: 560px;
+    }
+    .hero-sub strong { color: var(--t); }
+
+    /* ── Tags ── */
+    .tags {
+      display: flex; flex-wrap: wrap;
+      justify-content: center; gap: 8px;
+      padding: 36px 0 0;
+    }
+    .tag {
+      background: rgba(168,85,247,0.06);
+      border: 1px solid rgba(168,85,247,0.18);
+      border-radius: 999px; padding: 6px 16px;
+      font-size: 12px; color: #c4b5fd;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .tag:hover {
+      background: rgba(168,85,247,0.14);
+      border-color: rgba(168,85,247,0.45);
+      color: #fff;
+    }
+
+    /* ── Section header ── */
+    .sec-head {
+      display: flex; align-items: center; gap: 16px;
+      padding: 52px 0 20px;
+    }
+    .sec-head-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--m); white-space: nowrap;
+    }
+    .sec-head-line { flex: 1; height: 1px; background: var(--dim); }
+    .update-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 20px;
+    }
+    .update-date { font-size: 12px; color: var(--m); }
+    .update-badge {
+      font-size: 11px; color: var(--p);
+      background: rgba(168,85,247,0.10);
+      border: 1px solid rgba(168,85,247,0.22);
+      border-radius: 999px; padding: 3px 12px;
+    }
+
+    /* ── Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--cbord);
+      border-radius: 16px;
+      padding: 24px 24px 20px;
+      transition: background 0.18s, border-color 0.18s, transform 0.18s;
+    }
+    .card:hover {
+      background: var(--chov);
+      border-color: rgba(168,85,247,0.38);
+      transform: translateY(-2px);
+    }
+    .card.wide { grid-column: span 2; }
+    @media (max-width: 760px) { .card.wide { grid-column: span 1; } }
+
+    .card-head {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .card-icon { font-size: 22px; line-height: 1; flex-shrink: 0; }
+    .card-title { font-size: 15px; font-weight: 700; color: #fff; }
+    .card-subtitle { font-size: 11px; color: var(--m); margin-top: 2px; }
+
+    /* ── Items ── */
+    .items { display: flex; flex-direction: column; gap: 8px; }
+
+    a.item {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px;
+      text-decoration: none; color: inherit;
+      transition: background 0.15s, border-color 0.15s;
+      position: relative;
+    }
+    a.item:hover {
+      background: rgba(168,85,247,0.10);
+      border-color: rgba(168,85,247,0.32);
+    }
+    a.item::after {
+      content: '↗';
+      position: absolute; top: 12px; right: 12px;
+      font-size: 11px; color: var(--p);
+      opacity: 0; transition: opacity 0.15s;
+    }
+    a.item:hover::after { opacity: 1; }
+
+    .item-rank {
+      font-size: 10px; font-weight: 800;
+      min-width: 18px; color: var(--p);
+      line-height: 1.8; flex-shrink: 0;
+    }
+    .item-body { flex: 1; min-width: 0; padding-right: 18px; }
+
+    .item-name {
+      font-size: 13px; font-weight: 600;
+      color: var(--t); line-height: 1.45;
+      /* no truncation — allow wrapping */
+    }
+    a.item:hover .item-name { color: #d8b4fe; }
+
+    .item-desc {
+      font-size: 12px; color: var(--m);
+      margin-top: 6px; line-height: 1.75;
+    }
+
+    /* genre label inside desc */
+    .item-desc .gl {
+      display: inline-block;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+      border-radius: 4px; padding: 1px 6px; margin-right: 4px;
+      vertical-align: middle;
+    }
+    .gl.slg  { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
+    .gl.card { background: rgba(52,211,153,0.12);  color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+    .gl.idle { background: rgba(96,165,250,0.12);  color: #60a5fa; border: 1px solid rgba(96,165,250,0.3); }
+
+    .item-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .item-tag {
+      font-size: 10px;
+      background: rgba(168,85,247,0.10);
+      border: 1px solid rgba(168,85,247,0.20);
+      border-radius: 999px; padding: 1px 8px; color: #c4b5fd;
+    }
+    .item-tag.hot { background: rgba(236,72,153,0.10); border-color: rgba(236,72,153,0.22); color: #f9a8d4; }
+    .item-tag.new { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.22); color: #6ee7b7; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center; padding: 52px 0 36px;
+      font-size: 11px; color: var(--m);
+      border-top: 1px solid var(--dim);
+      margin-top: 48px;
+    }
+    footer p + p { margin-top: 6px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="banner">
+    <div class="banner-pill">
+      <span class="banner-dot"></span>
+      每日自动更新 &nbsp;·&nbsp; 游戏买量团队参考
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1>国内内容<br/><span class="g">情报站</span></h1>
+    <p class="hero-sub">
+      每日扫描<strong>抖音 · 快手 · 微博热搜</strong>，以买量专家视角拆解爆款，
+      直出 <strong>SLG / 卡牌 / 休闲</strong> 三品类可落地素材脚本
+    </p>
+  </div>
+
+  <div class="tags">
+    <div class="tag">🎵 抖音爆款</div>
+    <div class="tag">📱 快手热榜</div>
+    <div class="tag">🔥 微博热搜借势</div>
+    <div class="tag">⚔️ SLG素材参考</div>
+    <div class="tag">🃏 卡牌素材参考</div>
+    <div class="tag">🎮 休闲素材参考</div>
+    <div class="tag">🎯 TAPTAP竞品</div>
+  </div>
+
+  <div class="sec-head">
+    <span class="sec-head-label">今日情报</span>
+    <div class="sec-head-line"></div>
+  </div>
+
+  <div class="update-row">
+    <span class="update-date" id="update-date"></span>
+    <span class="update-badge">每日自动更新</span>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!--  内容区域由 update_情报站.py 每日自动替换 BEGIN        -->
+  <div class="grid">
+
+  <!-- 板块1：今日内容雷达 wide -->
+  <div class="card wide">
+    <div class="card-head">
+      <span class="card-icon">📡</span>
+      <div>
+        <div class="card-title">今日内容雷达</div>
+        <div class="card-subtitle">抖音 + 快手 · 2026.04.03 爆款扫描</div>
+      </div>
+    </div>
+    <div class="items">
+      <a class="item" href="https://www.douyin.com/search/%E4%B8%80%E9%A2%97%E7%B3%AF%E6%A0%97%E5%AD%90" target="_blank" rel="noopener">
+        <span class="item-rank">#1</span>
+        <div class="item-body">
+          <div class="item-name">🎵抖音 · 一颗糯栗子 · 定格动画美食，萌系食物会说话做表情 · 227万赞 / 63万转发</div>
+          <div class="item-desc">情绪钩子：童趣治愈让人上头</div>
+          <div class="item-tags"><span class="item-tag hot">爆款</span><span class="item-tag new">治愈系</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://www.douyin.com/search/%E5%8D%81%E4%B8%89%E8%A6%81%E5%92%8C%E6%8B%B3%E5%A4%B4" target="_blank" rel="noopener">
+        <span class="item-rank">#2</span>
+        <div class="item-body">
+          <div class="item-name">🎵抖音 · 十三要和拳头 · 夫妻裸辞开房车70天穿越欧洲看极光 · 262万赞</div>
+          <div class="item-desc">情绪钩子：说走就走的自由感</div>
+          <div class="item-tags"><span class="item-tag hot">爆款</span><span class="item-tag">旅行</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://www.douyin.com/search/AIGC%E5%8D%81%E4%B8%89%E5%A4%A9%E6%9E%A2%E9%98%B2%E7%BA%BF" target="_blank" rel="noopener">
+        <span class="item-rank">#3</span>
+        <div class="item-body">
+          <div class="item-name">🎵抖音 · AIGC十三 · AI科幻短剧《天枢防线》致敬流浪地球，4集破3807万播放</div>
+          <div class="item-desc">情绪钩子：国人热血众志成城燃爆</div>
+          <div class="item-tags"><span class="item-tag hot">爆款</span><span class="item-tag new">AI短剧</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://www.kuaishou.com/search/%E9%9D%92%E6%9F%A0%E7%9F%AD%E5%89%A7%E8%B5%B6%E5%B0%B8%E4%BC%A0%E4%BA%BA" target="_blank" rel="noopener">
+        <span class="item-rank">#4</span>
+        <div class="item-body">
+          <div class="item-name">📱快手 · 青柠短剧 · 《赶尸传人：许州奇案录》悬疑反转短剧 · 周涨粉93万</div>
+          <div class="item-desc">情绪钩子：反转上头停不下来</div>
+          <div class="item-tags"><span class="item-tag hot">爆款</span><span class="item-tag">悬疑</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://www.kuaishou.com/search/%E6%B8%85%E6%98%8EAI%E7%9F%AD%E7%89%87%E7%BA%B8%E6%89%8B%E6%9C%BA" target="_blank" rel="noopener">
+        <span class="item-rank">#5</span>
+        <div class="item-body">
+          <div class="item-name">📱快手 · 清明AI短片《纸手机》· AI还原已逝亲人画面，全网泪崩刷屏</div>
+          <div class="item-desc">情绪钩子：跨越生死的思念共鸣</div>
+          <div class="item-tags"><span class="item-tag hot">爆款</span><span class="item-tag new">清明借势</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://www.kuaishou.com/search/%E6%8C%87%E9%97%B4%E6%92%AD%E5%AE%A2%E6%83%85%E6%84%9F%E5%85%B1%E9%B8%A3" target="_blank" rel="noopener">
+        <span class="item-rank">#6</span>
+        <div class="item-body">
+          <div class="item-name">📱快手 · 指间播客 · 「说出你不敢说的话」情感播客短视频 · 周涨粉61万</div>
+          <div class="item-desc">情绪钩子：戳心窝子的真实共鸣</div>
+          <div class="item-tags"><span class="item-tag">情感</span></div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 板块2：SLG素材参考 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">⚔️</span>
+      <div>
+        <div class="card-title">SLG素材参考</div>
+        <div class="card-subtitle">今日热点改编 · 3条可落地方向</div>
+      </div>
+    </div>
+    <div class="items">
+      <a class="item" href="https://cc.oceanengine.com/inspiration?industry=%E6%B8%B8%E6%88%8F&subIndustry=%E7%AD%96%E7%95%A5" target="_blank" rel="noopener">
+        <span class="item-rank">#1</span>
+        <div class="item-body">
+          <div class="item-name">来源热点：十三要和拳头「裸辞说走就走的自由感」→ 弃城突围逆袭版</div>
+          <div class="item-desc">
+            <span class="gl slg">SLG</span> 0-3s钩子：「三十岁那年我辞掉工作，在一块破地上起家——没人想到，三年后我的铁骑踏遍整个大陆」<br>
+            分镜脚本：0-3s 主公落魄白手起家 → 3-15s 建城招兵加速崛起大量资源飞涨 → 15-25s 联盟血战弯道超车反杀强敌 → 25-30s「你的传奇，从今天开始」CTA下载<br>
+            投放文案：打工人的逆袭战场 / 不想卷996，来这里做霸主<br>
+            定向：25-35岁 | 职场压力/三国历史/策略游戏
+          </div>
+          <div class="item-tags"><span class="item-tag hot">爆款改编</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://cc.oceanengine.com/inspiration?industry=%E6%B8%B8%E6%88%8F&subIndustry=%E7%AD%96%E7%95%A5" target="_blank" rel="noopener">
+        <span class="item-rank">#2</span>
+        <div class="item-body">
+          <div class="item-name">来源热点：AI短剧《天枢防线》「国人众志成城热血」→ 守城保家版</div>
+          <div class="item-desc">
+            <span class="gl slg">SLG</span> 0-3s钩子：「敌军三路围城，粮草只剩三天——此刻退出，你的百万子民将血洗于野」<br>
+            分镜脚本：0-3s 城池告急危机特写 → 3-15s 紧急调兵布阵、盟友千里驰援 → 15-25s 守城反击城门大开全歼敌军 → 25-30s「守住它，就是你的江山」CTA<br>
+            投放文案：百万雄师等你号令 / 一道城门，挡住百万敌军<br>
+            定向：22-40岁 | 军事/历史/国家荣誉感兴趣
+          </div>
+          <div class="item-tags"><span class="item-tag new">热点借势</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://cc.oceanengine.com/inspiration?industry=%E6%B8%B8%E6%88%8F&subIndustry=%E7%AD%96%E7%95%A5" target="_blank" rel="noopener">
+        <span class="item-rank">#3</span>
+        <div class="item-body">
+          <div class="item-name">来源热点：清明AI《纸手机》「跨越生死的思念」→ 功勋留名青史版</div>
+          <div class="item-desc">
+            <span class="gl slg">SLG</span> 0-3s钩子：「我爷爷临终前说：他这辈子最大的遗憾，是没做成一件让人记住的事——我替他完成了」<br>
+            分镜脚本：0-3s 老照片闪回情感触发 → 3-15s 主公征战开疆拓土 → 15-25s 功勋碑刻名留青史万人朝拜 → 25-30s「成就属于你的传说」CTA<br>
+            投放文案：名字刻进史书，才叫真正活过 / 青史留名，从今天开始<br>
+            定向：28-45岁 | 清明节期间加权 | 家国情怀/历史爱好
+          </div>
+          <div class="item-tags"><span class="item-tag hot">清明借势</span></div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 板块3：卡牌游戏素材参考 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">🃏</span>
+      <div>
+        <div class="card-title">卡牌素材参考</div>
+        <div class="card-subtitle">今日热点改编 · 3条可落地方向</div>
+      </div>
+    </div>
+    <div class="items">
+      <a class="item" href="https://cc.oceanengine.com/inspiration?industry=%E6%B8%B8%E6%88%8F&subIndustry=%E5%8D%A1%E7%89%8C" target="_blank" rel="noopener">
+        <span class="item-rank">#1</span>
+        <div class="item-body">
+          <div class="item-name">来源热点：一颗糯栗子「定格动画萌系治愈」→ 抽卡高光出货爽感版</div>
+          <div class="item-desc">
+            <span class="gl card">卡牌</span> 0-3s钩子：「就这个看着普通的号，我随手抽了一发——金光闪烁，SSR又来了！！」<br>
+            分镜脚本：0-3s 玩家面无表情淡定点抽卡 → 3-15s 金光乱闪连出SSR当场崩溃狂叫 → 15-25s 新卡入队豪华阵容碾压Boss一刀秒 → 25-30s「你的锦鲤时刻，就差这一抽」CTA<br>
+            投放文案：今日欧皇实名认证 / 抽到手软，卡牌可以这么爽<br>
+            定向：18-30岁 | 二次元/抽卡/卡牌爱好者
+          </div>
+          <div class="item-tags"><span class="item-tag hot">爆款改编</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://cc.oceanengine.com/inspiration?industry=%E6%B8%B8%E6%88%8F&subIndustry=%E5%8D%A1%E7%89%8C" target="_blank" rel="noopener">
+        <span class="item-rank">#2</span>
+        <div class="item-body">
+          <div class="item-name">来源热点：青柠短剧《赶尸传人》「悬疑反转停不下来」→ 以弱胜强阵容反杀版</div>
+          <div class="item-desc">
+            <span class="gl card">卡牌</span> 0-3s钩子：「他5000战力当众嘲讽我380——下一秒他全程懵了」<br>
+            分镜脚本：0-3s 高战力玩家语言嘲讽特写 → 3-15s 低战力玩家冷静摆阵克制属性精准切入 → 15-25s 全程反杀对方看傻眼 → 25-30s「不是战力高就能赢，搭配才是核心」CTA<br>
+            投放文案：战力差10倍，赢了 / 克制属性才是王道，比氪金更爽<br>
+            定向：20-35岁 | 竞技/对战/策略卡牌兴趣
+          </div>
+          <div class="item-tags"><span class="item-tag new">反转爽感</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://cc.oceanengine.com/inspiration?industry=%E6%B8%B8%E6%88%8F&subIndustry=%E5%8D%A1%E7%89%8C" target="_blank" rel="noopener">
+        <span class="item-rank">#3</span>
+        <div class="item-body">
+          <div class="item-name">来源热点：清明AI《纸手机》「为重要的人守护」→ 情感向守护阵容版</div>
+          <div class="item-desc">
+            <span class="gl card">卡牌</span> 0-3s钩子：「妈说打游戏有什么用——我用最强阵容给她证明了」<br>
+            分镜脚本：0-3s 家人质疑游戏的场景 → 3-15s 精心搭配阵容逐一解析克制关系 → 15-25s 全服排名第一截图转给妈妈看 → 25-30s「为重要的人，变得更强」CTA<br>
+            投放文案：妈，你看，我也可以是第一 / 组好这套阵容，才敢说没白玩<br>
+            定向：22-35岁 | 清明节前后 | 卡牌/情感向用户
+          </div>
+          <div class="item-tags"><span class="item-tag hot">清明情感</span></div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 板块4：休闲游戏素材参考 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">🎮</span>
+      <div>
+        <div class="card-title">休闲素材参考</div>
+        <div class="card-subtitle">今日热点改编 · 3条可落地方向</div>
+      </div>
+    </div>
+    <div class="items">
+      <a class="item" href="https://cc.oceanengine.com/inspiration?industry=%E6%B8%B8%E6%88%8F&subIndustry=%E4%BC%91%E9%97%B2" target="_blank" rel="noopener">
+        <span class="item-rank">#1</span>
+        <div class="item-body">
+          <div class="item-name">来源热点：一颗糯栗子「童趣治愈停不下来」→ 解压上瘾自动续命版</div>
+          <div class="item-desc">
+            <span class="gl idle">休闲</span> 0-3s钩子：「我只是想玩五分钟放松一下……（两小时后）」<br>
+            分镜脚本：0-3s 打工人发呆摸鱼→随手点开游戏 → 3-15s 拖拽消除/切切切爽感连击多巴胺狂飙 → 15-25s 通关弹出成就动画烟花 → 25-30s「现在下载，下班解压神器」CTA<br>
+            投放文案：今天多难，玩它五分钟就好 / 唯一不需要动脑的快乐<br>
+            定向：18-45岁 | 上班族/碎片时间/解压广泛人群
+          </div>
+          <div class="item-tags"><span class="item-tag hot">爆款改编</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://cc.oceanengine.com/inspiration?industry=%E6%B8%B8%E6%88%8F&subIndustry=%E4%BC%91%E9%97%B2" target="_blank" rel="noopener">
+        <span class="item-rank">#2</span>
+        <div class="item-body">
+          <div class="item-name">来源热点：指间播客「说出你不敢说的话」→ 反人类操作挑战社交版</div>
+          <div class="item-desc">
+            <span class="gl idle">休闲</span> 0-3s钩子：「99%的人第一关就卡住——你敢来挑战吗？」<br>
+            分镜脚本：0-3s 挑战框弹出+反人类操作特写 → 3-15s 主播连续失败崩溃破防合集 → 15-25s 终于通关爆发庆祝全程记录 → 25-30s「你能过第几关？评论区晒」CTA互动<br>
+            投放文案：越难越上头，第几关让你破防 / 手速不行？还是脑子不行？<br>
+            定向：16-28岁 | 挑战/竞技/社交分享爱好者
+          </div>
+          <div class="item-tags"><span class="item-tag new">挑战传播</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://cc.oceanengine.com/inspiration?industry=%E6%B8%B8%E6%88%8F&subIndustry=%E4%BC%91%E9%97%B2" target="_blank" rel="noopener">
+        <span class="item-rank">#3</span>
+        <div class="item-body">
+          <div class="item-name">来源热点：十三要和拳头「裸辞自由感」→ 低门槛高成就感随开随玩版</div>
+          <div class="item-desc">
+            <span class="gl idle">休闲</span> 0-3s钩子：「不用充钱，不用肝——3分钟建完全球第一城」<br>
+            分镜脚本：0-3s 素人玩家摸着头一脸惊喜 → 3-15s 极速点击建造满屏资源飞涨城市拔地而起 → 15-25s 城市壮观俯瞰图排名登顶 → 25-30s「随时开，随时停，就是这么自由」CTA<br>
+            投放文案：没时间玩大游戏，就玩这个 / 三分钟上手，零门槛当市长<br>
+            定向：25-50岁 | 碎片时间/养成/城建爱好者
+          </div>
+          <div class="item-tags"><span class="item-tag">低门槛</span></div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 板块5：今日热搜借势脚本 wide -->
+  <div class="card wide">
+    <div class="card-head">
+      <span class="card-icon">🔥</span>
+      <div>
+        <div class="card-title">今日热搜借势脚本</div>
+        <div class="card-subtitle">微博热搜 2026.04.03 · 最适合游戏借势的4个话题</div>
+      </div>
+    </div>
+    <div class="items">
+      <a class="item" href="https://s.weibo.com/weibo?q=%E6%B8%85%E6%98%8E%E8%8A%82" target="_blank" rel="noopener">
+        <span class="item-rank">#1</span>
+        <div class="item-body">
+          <div class="item-name">#清明节# · 4月4-6日放假，扫墓思念情绪全网弥漫，清明AI短片刷屏</div>
+          <div class="item-desc">
+            <span class="gl slg">SLG</span> 开场：「清明这天我想起了爷爷——他说过，好男儿要建功立业，让家族被人永远记住」<br>
+            <span class="gl card">卡牌</span> 开场：「清明上山祭祖，老爸问我：你这辈子会留下什么？——我掏出手机，给他看了我的传说级阵容」<br>
+            <span class="gl idle">休闲</span> 开场：「清明放假第一件事：找一款不用动脑、躺着就能玩、解压又解馋的游戏」
+          </div>
+          <div class="item-tags"><span class="item-tag hot">节日爆款</span><span class="item-tag new">清明</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://s.weibo.com/weibo?q=%E9%A3%9E%E9%A9%B0%E4%BA%BA%E7%94%9F3" target="_blank" rel="noopener">
+        <span class="item-rank">#2</span>
+        <div class="item-body">
+          <div class="item-name">#飞驰人生3# · 2026全球票房冠军延长至4月18日，沈腾逆袭热度持续燃烧</div>
+          <div class="item-desc">
+            <span class="gl slg">SLG</span> 开场：「飞驰人生告诉我，人生就是不停地弯道超车——在这里，我已经超过了三百万人」<br>
+            <span class="gl card">卡牌</span> 开场：「沈腾靠幽默逆袭了全球，我靠这张卡逆袭了全服——看谁笑到最后」<br>
+            <span class="gl idle">休闲</span> 开场：「飞驰人生3都刷完了，现在给你找个更爽的——不用开车，一样飞驰，一样爽」
+          </div>
+          <div class="item-tags"><span class="item-tag hot">爆款</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://s.weibo.com/weibo?q=%E7%BE%8E%E5%9B%BD%E5%85%B3%E7%A8%8E%E4%B8%AD%E5%9B%BD%E5%8F%8D%E5%88%B6" target="_blank" rel="noopener">
+        <span class="item-rank">#3</span>
+        <div class="item-body">
+          <div class="item-name">#美国关税中国反制# · 特朗普"解放日"周年讲话，全球市场震荡，中国硬气表态</div>
+          <div class="item-desc">
+            <span class="gl slg">SLG</span> 开场：「外敌封锁、四面围困——这种绝境我游戏里每天都在打，而且每次都赢」<br>
+            <span class="gl card">卡牌</span> 开场：「被打压的时候才是出牌的时机——我手里这张逆天改命卡，就等这一刻」<br>
+            <span class="gl idle">休闲</span> 开场：「大国博弈太费脑，下班就玩这个放空——什么都不想，只管消消消」
+          </div>
+          <div class="item-tags"><span class="item-tag hot">热搜</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://s.weibo.com/weibo?q=%E5%91%A8%E6%B7%B1%E6%96%B0%E6%AD%8C%E7%A6%81%E6%AD%A2AI%E8%AE%AD%E7%BB%83" target="_blank" rel="noopener">
+        <span class="item-rank">#4</span>
+        <div class="item-body">
+          <div class="item-name">#周深新歌禁止AI训练# · 版权与AI边界引发热议，创作者保护意识集体觉醒</div>
+          <div class="item-desc">
+            <span class="gl slg">SLG</span> 开场：「AI可以模仿一切——但它替代不了真正的帝王决策，你的每一步，只有你能走」<br>
+            <span class="gl card">卡牌</span> 开场：「AI出的牌没有灵魂——我打出这张，是因为我比它更懂人心、更懂时机」<br>
+            <span class="gl idle">休闲</span> 开场：「AI这么厉害，这个关卡它都没法过——你来试试？」
+          </div>
+          <div class="item-tags"><span class="item-tag new">趋势话题</span></div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 板块6：TAPTAP竞品分析 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">🎯</span>
+      <div>
+        <div class="card-title">TAPTAP今日热门</div>
+        <div class="card-subtitle">竞品可打差异化方向 · 2026.04 在榜游戏</div>
+      </div>
+    </div>
+    <div class="items">
+      <a class="item" href="https://www.taptap.cn/search?q=%E4%B8%89%E5%9B%BD%E8%B0%8B%E5%AE%9A%E5%A4%A9%E4%B8%8B" target="_blank" rel="noopener">
+        <span class="item-rank">#1</span>
+        <div class="item-body">
+          <div class="item-name">三国：谋定天下 · SLG策略 · 口碑评分 8.2</div>
+          <div class="item-desc">
+            玩家最爱吐槽：联盟内鬼太多、开服即PUA、开荒期队友消极躺平<br>
+            竞品可打：「盟友坑你？在XXX，智能匹配同段位真实战友，不PUA不内鬼，纯靠实力打天下——来试试真正的协作」
+          </div>
+          <div class="item-tags"><span class="item-tag hot">SLG标杆</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://www.taptap.cn/search?q=%E7%82%89%E7%9F%B3%E4%BC%A0%E8%AF%B4" target="_blank" rel="noopener">
+        <span class="item-rank">#2</span>
+        <div class="item-body">
+          <div class="item-name">炉石传说 · 卡牌TCG · 口碑评分 8.0</div>
+          <div class="item-desc">
+            玩家最爱吐槽：卡包贵更新慢、穷鬼玩家被疯狂劝退、赛季末卡组被大幅削弱<br>
+            竞品可打：「不用买卡包，登录就送全套SSR级卡组——XXX，穷鬼也能满配打天下，氪不氪是你自己的事」
+          </div>
+          <div class="item-tags"><span class="item-tag hot">卡牌标杆</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://www.taptap.cn/search?q=%E7%AC%AC%E4%BA%94%E4%BA%BA%E6%A0%BC" target="_blank" rel="noopener">
+        <span class="item-rank">#3</span>
+        <div class="item-body">
+          <div class="item-name">第五人格 · 非对称对抗 · 口碑评分 7.8</div>
+          <div class="item-desc">
+            玩家最爱吐槽：匹配时间太长、皮肤氪金无底洞、新手期被老玩家按着打<br>
+            竞品可打：「等队友10分钟、玩了3分钟——XXX随开随玩，90秒匹配，新手保护局，皮肤全靠打，零氪也能玩得帅」
+          </div>
+          <div class="item-tags"><span class="item-tag">非对称热门</span></div>
+        </div>
+      </a>
+      <a class="item" href="https://www.taptap.cn/search?q=%E4%BD%BF%E5%91%BD%E5%8F%AC%E5%94%A4%E6%89%8B%E6%B8%B8" target="_blank" rel="noopener">
+        <span class="item-rank">#4</span>
+        <div class="item-body">
+          <div class="item-name">使命召唤手游 · 射击竞技 · 口碑评分 7.5</div>
+          <div class="item-desc">
+            玩家最爱吐槽：更新太激进破坏生态、低配机优化差卡顿严重、外挂横行举报无效<br>
+            竞品可打：「100块手机都能流畅跑、反外挂系统实时检测——XXX，低配神器高画质不卡，每一把都干净」
+          </div>
+          <div class="item-tags"><span class="item-tag new">射击热门</span></div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</div>
+  <!--  内容区域 END                                         -->
+  <!-- ══════════════════════════════════════════════════════ -->
+
+  <footer>
+    <p>国内内容情报站 · 每日自动更新 · 游戏买量团队专用</p>
+    <p>数据来源：抖音 / 快手 / 微博 / TAPTAP / 巨量创意</p>
+  </footer>
+
+</div>
+<script>
+  const d = new Date();
+  document.getElementById('update-date').textContent =
+    `📅 ${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+</script>
+</body>
+</html>
